@@ -36,7 +36,7 @@ char *nums[11] = {"+", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
 
 clock_t start_time;
 float prev_time;
-float refresh_ms = 100;
+float refresh_ms = 200;
 
 clock_t last_flash;
 float flash_time = 0.1f;
@@ -47,7 +47,7 @@ int main() {
   setlocale(LC_ALL, "");
   init_curses();
 
-  run();
+  run(true);
   return 0;
 }
 
@@ -55,6 +55,9 @@ void setup_grid() {
 
   free(grid);
   grid = malloc(width * height * sizeof *grid);
+  for (int i = 0; i < width * height; i++) {
+    grid[i] = 0;
+  }
 }
 
 void init_curses() {
@@ -90,9 +93,7 @@ void set_difficulty(int difficulty) {
   cur_difficulty = difficulty;
 }
 
-void run() {
-
-  attron(A_BOLD);
+int do_menu() {
 
   char *top_text = "=: Select difficulty :=";
 
@@ -123,7 +124,14 @@ void run() {
     exit(0);
   }
 
-  set_difficulty(m.selected);
+  return m.selected;
+}
+
+void run(bool select_difficulty) {
+
+  attron(A_BOLD);
+
+  set_difficulty(select_difficulty ? do_menu() : cur_difficulty);
 
   cur_cell[0] = width / 2;
   cur_cell[1] = height / 2;
@@ -144,7 +152,8 @@ void run_loop() {
 
     process_input(getch());
 
-    if ((float)(clock() - last_flash) / CLOCKS_PER_SEC > flash_time / 100) {
+    if ((float)(clock() - last_flash) / CLOCKS_PER_SEC >
+        flash_time / refresh_ms) {
       flashing = !flashing;
       last_flash = clock();
     }
@@ -275,11 +284,11 @@ void process_input(char input) {
     break;
 
   case 'r':
-    run();
+    run(false);
     break;
 
   case 'q':
-    exit(0);
+    run(true);
     break;
   }
 
