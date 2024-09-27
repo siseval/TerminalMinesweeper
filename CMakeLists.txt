@@ -3,6 +3,7 @@ set(CMAKE_C_STANDARD 23)
 project(minesweeper)
 add_executable(minesweeper
   minesweeper.c
+  menu.c
   )
 
 find_package(Curses REQUIRED)

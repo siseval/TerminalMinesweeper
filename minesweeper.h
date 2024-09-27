@@ -2,7 +2,9 @@
 #ifndef MINESWEEPER_H
 #define MINESWEEPER_H
 
+#include "menu.h"
 #include <curses.h>
+#include <locale.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,7 +37,6 @@ void check_win();
 void toggle_borders();
 
 bool do_bold(int x, int y);
-void to_center(int len);
 void draw_top(float timer);
 void draw_grid();
 int get_cell_color(int x, int y);

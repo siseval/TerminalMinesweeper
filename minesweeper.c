@@ -41,13 +41,18 @@ bool flashing = false;
 
 int main() {
 
+  setlocale(LC_ALL, "");
   init_curses();
 
   run();
   return 0;
 }
 
-void setup_grid() { grid = malloc(width * height * sizeof *grid); }
+void setup_grid() {
+
+  free(grid);
+  grid = malloc(width * height * sizeof *grid);
+}
 
 void init_curses() {
 
@@ -82,7 +87,33 @@ void set_difficulty(int difficulty) {
 
 void run() {
 
-  set_difficulty(0);
+  attron(A_BOLD);
+
+  char *top_text = "=: Select difficulty :=";
+
+  struct button easy = {"Easy"};
+  struct button medium = {"Medium"};
+  struct button hard = {"Hard"};
+
+  struct menu m = {true, " ", " ",       ":: ",       " ::",    " ",
+                   " ",  " ", " ",       false,       12,       11,
+                   3,    0,   easy.text, medium.text, hard.text};
+
+  while (!m.has_selected) {
+    getmaxyx(stdscr, scrh, scrw);
+    clear();
+    printw("\n\n\n");
+    to_center(strlen(top_text), scrw);
+    printw(top_text);
+    printw("\n\n\n\r");
+    draw_buttons(m, scrw);
+    handle_input(&m);
+  }
+
+  set_difficulty(m.selected);
+
+  cur_cell[0] = width / 2;
+  cur_cell[1] = height / 2;
 
   setup_grid();
   first_reveal = true;
@@ -345,14 +376,14 @@ void draw_top(float timer) {
 
   attron(A_BOLD);
 
-  char *top = "Timer: %.0fs Marked: %d/%d";
+  char *top = "Timer: %.0fs <> Bombs: %d/%d";
   int timer_len = num_length((int)timer * 100);
   int flags_len = num_length(num_flags);
   int bombs_len = num_length(num_bombs);
 
-  int n_length = timer_len + flags_len + bombs_len - 6;
+  int n_length = timer_len + flags_len + bombs_len - 7;
 
-  to_center(strlen(top) + n_length);
+  to_center(strlen(top) + n_length, scrw);
   printw(top, timer * 100, num_flags, num_bombs);
 
   prev_time = timer;
@@ -361,21 +392,11 @@ void draw_top(float timer) {
   attroff(A_BOLD);
 }
 
-void to_center(int len) {
-
-  int fwidth = (scrw / 2) - len / 2;
-  char empty[100] = "";
-  for (int i = 0; i < fwidth; i++) {
-    strcat(empty, " ");
-  }
-  printw("%s", empty);
-}
-
 void draw_grid() {
 
   if (!show_borders) {
     for (int i = 0; i < height; i++) {
-      to_center(width * 2);
+      to_center(width * 2, scrw);
       for (int j = 0; j < width; j++) {
 
         do_bold(j, i) ? attron(A_BOLD) : attroff(A_BOLD);
@@ -389,7 +410,7 @@ void draw_grid() {
   }
 
   for (int i = 0; i < height * 2 + 1; i++) {
-    to_center(width * 4);
+    to_center(width * 4, scrw);
     if (i % 2 == 0) {
 
       attron(COLOR_PAIR(11));
