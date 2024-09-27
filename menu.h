@@ -32,7 +32,7 @@ struct menu {
 struct button get_button(struct menu m, int i);
 
 void draw_button(struct button b, struct menu m, int col, int scrw);
-void draw_buttons(struct menu m, int scrw);
+void draw_buttons(struct menu m, int scrw, int gaps[]);
 
 void handle_input(struct menu *m);
 

@@ -99,11 +99,14 @@ void run() {
   struct button easy = {"Easy"};
   struct button medium = {"Medium"};
   struct button hard = {"Hard"};
+  struct button quit = {"Quit"};
+
+  int gaps[4] = {0, 0, 0, 2};
 
   struct menu m = {
-      true,      " ",         " ",      ":: ", " ::", " ", " ",
-      " ",       " ",         false,    12,    11,    3,   cur_difficulty,
-      easy.text, medium.text, hard.text};
+      true,      " ",         " ",       ":: ",    " ::", " ", " ",
+      " ",       " ",         false,     12,       11,    4,   cur_difficulty,
+      easy.text, medium.text, hard.text, quit.text};
 
   while (!m.has_selected) {
     getmaxyx(stdscr, scrh, scrw);
@@ -112,8 +115,12 @@ void run() {
     to_center(strlen(top_text), scrw);
     printw(top_text);
     printw("\n\n\n\r");
-    draw_buttons(m, scrw);
+    draw_buttons(m, scrw, gaps);
     handle_input(&m);
+  }
+
+  if (m.selected == 3) {
+    exit(0);
   }
 
   set_difficulty(m.selected);

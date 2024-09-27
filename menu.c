@@ -51,9 +51,12 @@ void draw_button(struct button b, struct menu m, int col, int scrw) {
   attroff(COLOR_PAIR(col));
 }
 
-void draw_buttons(struct menu m, int scrw) {
+void draw_buttons(struct menu m, int scrw, int gaps[]) {
   for (int i = 0; i < m.num_buttons; i++) {
     struct button b = m.buttons[i];
+    for (int j = 0; j < gaps[i]; j++) {
+      printw("\n");
+    }
     draw_button(b, m, m.selected == i ? m.selected_col : m.normal_col, scrw);
   }
 }
@@ -74,6 +77,7 @@ void handle_input(struct menu *m) {
     break;
 
   case ' ':
+  case 'f':
     m->has_selected = true;
     break;
   }
