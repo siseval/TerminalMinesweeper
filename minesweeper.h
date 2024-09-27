@@ -3,6 +3,7 @@
 #define MINESWEEPER_H
 
 #include "menu.h"
+#include <ctype.h>
 #include <curses.h>
 #include <locale.h>
 #include <math.h>

@@ -13,6 +13,8 @@ int num_flags = 0;
 bool lost = false;
 bool won = false;
 
+char prev_input = '1';
+
 int difficulties[6] = {9, 10, 16, 40, 21, 99};
 int cur_difficulty = 0;
 
@@ -28,9 +30,9 @@ char *cursor_cell[2] = {"=", "#"};
 
 char *empty_cell_nb = ".";
 char *flag_cell_nb = "P";
-char *cursor_cell_nb[2] = {"X", "+"};
+char *cursor_cell_nb[2] = {"=", "#"};
 
-char *nums[11] = {"/", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
+char *nums[11] = {"+", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
 
 clock_t start_time;
 float prev_time;
@@ -272,6 +274,8 @@ void process_input(char input) {
     exit(0);
     break;
   }
+
+  prev_input = isdigit(input) ? input : prev_input;
 }
 
 void move_cursor(int dx, int dy) {
@@ -280,10 +284,25 @@ void move_cursor(int dx, int dy) {
     return;
   }
 
-  if (cur_cell[0] + dx < 0 || cur_cell[0] + dx >= width) {
+  dx = dx * (prev_input - '0');
+  dy = dy * (prev_input - '0');
+
+  prev_input = '1';
+
+  if (cur_cell[0] + dx < 0) {
+    cur_cell[0] = 0;
     return;
   }
-  if (cur_cell[1] + dy < 0 || cur_cell[1] + dy >= height) {
+  if (cur_cell[0] + dx >= width) {
+    cur_cell[0] = width - 1;
+    return;
+  }
+  if (cur_cell[1] + dy < 0) {
+    cur_cell[1] = 0;
+    return;
+  }
+  if (cur_cell[1] + dy >= height) {
+    cur_cell[1] = height - 1;
     return;
   }
 
@@ -379,6 +398,7 @@ int num_length(int value) {
 void draw_top(float timer) {
 
   attron(A_BOLD);
+  printw("\n\r");
 
   if (won) {
     attron(COLOR_PAIR(12));
