@@ -14,6 +14,7 @@ bool lost = false;
 bool won = false;
 
 int difficulties[6] = {9, 10, 16, 40, 21, 99};
+int cur_difficulty = 0;
 
 char *h_line = "-";
 char *v_line = "|";
@@ -23,13 +24,13 @@ bool show_borders = true;
 
 char *empty_cell = " ";
 char *flag_cell = "P";
-char *cursor_cell[2] = {"#", ":"};
+char *cursor_cell[2] = {"=", "#"};
 
 char *empty_cell_nb = ".";
 char *flag_cell_nb = "P";
 char *cursor_cell_nb[2] = {"X", "+"};
 
-char *nums[11] = {".", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
+char *nums[11] = {"/", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
 
 clock_t start_time;
 float prev_time;
@@ -83,6 +84,8 @@ void set_difficulty(int difficulty) {
   width = difficulties[2 * difficulty];
   height = difficulties[2 * difficulty];
   num_bombs = difficulties[2 * difficulty + 1];
+
+  cur_difficulty = difficulty;
 }
 
 void run() {
@@ -95,9 +98,10 @@ void run() {
   struct button medium = {"Medium"};
   struct button hard = {"Hard"};
 
-  struct menu m = {true, " ", " ",       ":: ",       " ::",    " ",
-                   " ",  " ", " ",       false,       12,       11,
-                   3,    0,   easy.text, medium.text, hard.text};
+  struct menu m = {
+      true,      " ",         " ",      ":: ", " ::", " ", " ",
+      " ",       " ",         false,    12,    11,    3,   cur_difficulty,
+      easy.text, medium.text, hard.text};
 
   while (!m.has_selected) {
     getmaxyx(stdscr, scrh, scrw);
@@ -359,7 +363,7 @@ void toggle_borders() { show_borders = !show_borders; }
 
 bool do_bold(int x, int y) {
 
-  return is_cursor(x, y) || get_cell(x, y) >= 20 || get_cell(x, y) < 0;
+  return is_cursor(x, y) || get_cell(x, y) >= 20 || get_cell(x, y) < -1;
 }
 
 int num_length(int value) {
@@ -376,7 +380,15 @@ void draw_top(float timer) {
 
   attron(A_BOLD);
 
-  char *top = "Timer: %.0fs <> Bombs: %d/%d";
+  if (won) {
+    attron(COLOR_PAIR(12));
+  } else if (lost) {
+    attron(COLOR_PAIR(9));
+  } else {
+    attron(COLOR_PAIR(11));
+  }
+
+  char *top = "Timer: %.0fs <*> Bombs: %d/%d";
   int timer_len = num_length((int)timer * 100);
   int flags_len = num_length(num_flags);
   int bombs_len = num_length(num_bombs);
