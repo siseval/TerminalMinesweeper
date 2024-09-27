@@ -36,10 +36,10 @@ char *nums[11] = {"+", "1", "2", "3", "4", "5", "6", "7", "8", "*", "+"};
 
 clock_t start_time;
 float prev_time;
-float refresh_ms = 50;
+float refresh_ms = 100;
 
 clock_t last_flash;
-float flash_time = 0.2f;
+float flash_time = 0.1f;
 bool flashing = false;
 
 int main() {
@@ -183,6 +183,7 @@ void reveal_bombs() {
 void place_bomb(int exclx, int excly) {
 
   bool placed = false;
+  srand(time(NULL));
   while (!placed) {
 
     int x = rand() % width;
