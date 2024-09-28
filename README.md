@@ -10,5 +10,6 @@
 - **WASD** or **KHJL** to move the cursor. (Vim like numbered navigation is supported).  
 - **F** to place a flag, or select a menu option.  
 - **Space** to reveal a tile, or select a menu option.
+- **B** to toggle minimal view.
 - **R** to restart the game.
 - **Q** to quit to menu.
