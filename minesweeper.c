@@ -236,6 +236,7 @@ void place_bombs() {
     }
   }
 }
+
 int count_bombs(int x, int y) {
   int count = 0;
   for (int i = -1; i <= 1; i++) {
@@ -313,8 +314,8 @@ void move_cursor(int dx, int dy) {
     return;
   }
 
-  dx = dx * (prev_input - '0');
-  dy = dy * (prev_input - '0');
+  dx *= (prev_input - '0');
+  dy *= (prev_input - '0');
 
   prev_input = '1';
 
@@ -348,6 +349,11 @@ void reveal_cell(int x, int y) {
     return;
   }
 
+  if (get_cell(x, y) >= 20) {
+    set_cell(x, y, get_cell(x, y) - 20);
+    num_flags -= 1;
+  }
+
   if (first_reveal) {
     place_bombs();
     first_reveal = false;
@@ -359,10 +365,6 @@ void reveal_cell(int x, int y) {
       lose();
     }
     return;
-  }
-
-  if (get_cell(x, y) >= 20) {
-    set_cell(x, y, get_cell(x, y) - 20);
   }
 
   set_cell(x, y, -1 - get_cell(x, y));
