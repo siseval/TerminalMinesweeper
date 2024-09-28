@@ -22,6 +22,7 @@ void run(bool select_difficulty);
 void run_loop();
 void lose();
 void win();
+void quit();
 
 void reveal_bombs();
 void place_bomb(int exclx, int excly);

@@ -97,17 +97,22 @@ int do_menu() {
 
   char *top_text = "=: Select difficulty :=";
 
-  struct button easy = {"Easy"};
-  struct button medium = {"Medium"};
-  struct button hard = {"Hard"};
-  struct button quit = {"Quit"};
+  struct button b_easy = {"Easy"};
+  struct button b_medium = {"Medium"};
+  struct button b_hard = {"Hard"};
+  struct button b_quit = {"Quit"};
 
   int gaps[4] = {0, 0, 0, 2};
 
-  struct menu m = {
-      true,      " ",         " ",       ":: ",    " ::", " ", " ",
-      " ",       " ",         false,     12,       11,    4,   cur_difficulty,
-      easy.text, medium.text, hard.text, quit.text};
+  struct menu m = {true,        " ",
+                   " ",         ":: ",
+                   " ::",       " ",
+                   " ",         " ",
+                   " ",         false,
+                   12,          11,
+                   4,           cur_difficulty,
+                   b_easy.text, b_medium.text,
+                   b_hard.text, b_quit.text};
 
   while (!m.has_selected) {
     getmaxyx(stdscr, scrh, scrw);
@@ -121,7 +126,7 @@ int do_menu() {
   }
 
   if (m.selected == 3) {
-    exit(0);
+    quit();
   }
 
   return m.selected;
@@ -187,6 +192,13 @@ void reveal_bombs() {
       }
     }
   }
+}
+
+void quit() {
+
+  clear();
+  endwin();
+  exit(0);
 }
 
 void place_bomb(int exclx, int excly) {
